@@ -11,6 +11,7 @@
 
 #include "main.h"
 #include "canOpenNode402.h"
+#include "canOpenNode406.h"
 #include "globalDataStructures_CM_MTR_FRoST.h"
 
 
@@ -71,6 +72,61 @@ void RobotArm_setSingleAngle(uint8_t NodeId, uint16_t actualAngle, uint16_t tage
 uint8_t RobotArm_setSingleAngleD(uint8_t NodeId, double actualAngle, double tagetAngle, double hysteresis, double velocity);
 
 
+typedef enum{
+	Arm_State_Start
+	,Arm_State_Init
+	,Arm_State_SwitchOn
+	,Arm_State_Operation_SetParameter
+	,Arm_State_Operation_SetParameterVelocity
+	,Arm_State_Operation_Motion
+	,Arm_State_Operation_End
+	,Arm_State_Init_Error
+	,Arm_State_SwitchOn_Error
+	,Arm_State_Operation_SetParameter_Error
+	,Arm_State_Operation_Motion_Error
+	,Arm_State_Operation_End_Error
+	,Arm_State_Operation_SetParameterVelocity_Error
+	,Arm_State_Error
+	,Arm_State_UndefinedState_Error
+}Arm_enumTypeDef_States;
+
+typedef enum
+{
+	Arm_Mode_Disable
+	,Arm_Mode_Axis
+	,Arm_Mode_IK
+	,Arm_Mode_TeachedPosition
+	,Arm_Mode_Reture
+}Arm_enumTypeDef_Modes;
+
+typedef struct
+{
+	canOpenNode_typeDef_Node402 Motor;
+	canOpenNode_typeDef_Node406 Encoder;
+}globalData_typeDef_robotArm_Achse;
+
+typedef struct
+{
+	// Modus
+	Arm_enumTypeDef_States 						Arm_State_Soll;			// State
+	Arm_enumTypeDef_States 						Arm_State_Ist;			// State
+	globalData_enumTypeDef_robotArmMode 		Crrt_mode_Soll;
+	globalData_enumTypeDef_robotArmMode 		Crrt_mode_Ist;
+
+	// Test Var
+	int8_t 										Do_Something;
+
+	globalData_typeDef_robotArm_ARM_GS			robotArm_ARM_GS;
+	globalData_typeDef_robotArm_GS_ARM			robotArm_GS_ARM;
+
+	// Build
+	canOpenNode_typeDef_Node402 				robotArm_Motor6;		// Tool
+	globalData_typeDef_robotArm_Achse			Achse[5];
+
+	// IK Ergebnise
+	uint16_t 									Schritte[2][6];
+
+}globalData_typeDef_robotArm;
 
 ///* set velocity of both motors
 // * @param x_direction: [-100:100], value of direction transverse to direction of travel

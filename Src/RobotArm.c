@@ -206,6 +206,7 @@ void RobotArm_updateEncoder(uint8_t NodeId, uint16_t data)
     	{
     		case NODE_ID_ENCODER_1:
     			messageRobotArmTX.actualJointAngle1 = jointAngle;
+
 				break;
     		case NODE_ID_ENCODER_2:
     			messageRobotArmTX.actualJointAngle2 = jointAngle;
@@ -736,6 +737,57 @@ void RobotArm_initEncoders(void)
 		Error_Handler();
 	}
 
+}
+
+
+
+uint8_t isRobotArm_initEncodersSuccessfull(globalData_typeDef_robotArm* Check_Arm)
+{
+	if (!isRobotArm_initeEncoders_SetUpSucessfull(Check_Arm->robotArm_Encoder1,NODE_ID_ENCODER_1)) return 0;
+	if (!isRobotArm_initeEncoders_SetUpSucessfull(Check_Arm->robotArm_Encoder2,NODE_ID_ENCODER_2)) return 0;
+	if (!isRobotArm_initeEncoders_SetUpSucessfull(Check_Arm->robotArm_Encoder3,NODE_ID_ENCODER_3)) return 0;
+	if (!isRobotArm_initeEncoders_SetUpSucessfull(Check_Arm->robotArm_Encoder4,NODE_ID_ENCODER_4)) return 0;
+	if (!isRobotArm_initeEncoders_SetUpSucessfull(Check_Arm->robotArm_Encoder5,NODE_ID_ENCODER_5)) return 0;
+	return 1;
+}
+
+uint8_t isRobotArm_initeEncoders_SetUpSucessfull(canOpenNode_typeDef_Node* Node,uint8_t Node_id)
+{
+	Node->NodeId 			= Node_id;
+	Node->NodeType 			= NODETYPE_EAM360;
+	Node->NodeState 		= NODESTATE_NONE;
+	Node->NodeError 		= NODEERROR_NONE;
+	Node->NodeNmtStatus		= NOTESTATE_NMT_NONE;
+	Node->hcan				= &hcan1;
+	Node->mhcanHandle		= &mhcan1Handle;
+	Node->errorCallback	= &RobotArm_errorHandler;
+	if(canOpenNode_addInstance(Node, 0, 0)!=APPLICATIONERROR_NONE) return 0;
+	return 1;
+}
+
+uint8_t isRobotArm_initMotorsSuccessful(globalData_typeDef_robotArm* Check_Arm)
+{
+	if(!isRobotArm_initMotors_SetUpSucessfull(Check_Arm->robotArm_Motor2,NODE_ID_MOTOR_2)) return 0;
+	if(!isRobotArm_initMotors_SetUpSucessfull(Check_Arm->robotArm_Motor3,NODE_ID_MOTOR_3)) return 0;
+	if(!isRobotArm_initMotors_SetUpSucessfull(Check_Arm->robotArm_Motor4,NODE_ID_MOTOR_4)) return 0;
+	if(!isRobotArm_initMotors_SetUpSucessfull(Check_Arm->robotArm_Motor5,NODE_ID_MOTOR_5)) return 0;
+	return 1;
+}
+
+uint8_t isRobotArm_initMotors_SetUpSucessfull(canOpenNode_typeDef_Node402* Node,uint8_t Node_id)
+{
+	Node->NodeBasic.NodeId 				= Node_id;
+	Node->NodeBasic.NodeType 			= NODETYPE_CL4E;
+	Node->NodeBasic.NodeState 			= NODESTATE_NONE;
+	Node->NodeBasic.NodeError 			= NODEERROR_NONE;
+	Node->NodeBasic.NodeNmtStatus		= NOTESTATE_NMT_NONE;
+	Node->Node402Mode 					= NODE402MODE_PROFILE_VELOCITY;
+	Node->Node402State 					= CANOPEN402_STATE_SWITCH_ON_DISABLED;
+	Node->NodeBasic.hcan				= &hcan1;
+	Node->NodeBasic.mhcanHandle			= &mhcan1Handle;
+	Node->NodeBasic.errorCallback		= &RobotArm_errorHandler;
+	if(canOpenNode_addInstance(&Node->NodeBasic, CL4E_initSDOsMotor2,sizeof(CL4E_initSDOsMotor2)/sizeof(canOpen_typeDef_SDOprimitive))!=APPLICATIONERROR_NONE) return 0;
+	return 1;
 }
 
 
