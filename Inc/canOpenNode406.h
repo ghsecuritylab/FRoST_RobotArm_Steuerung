@@ -72,17 +72,17 @@ typedef struct
 
 
 /* indices for communication objects */
-#define CANOPEN_IDX_POSITION        		(0x6383)    	// index of diagnose
-#define CANOPEN_IDX_DIAGNOSE        		(0x2117)    	// index of diagnose
-#define CANOPEN_IDX_VELOCITY        		(0x2118)    	// index of velocity
-#define CANOPEN_IDX_SPEEDSAMPLING        	(0x4001)    	// index of speed sampling interval [ms]
-#define CANOPEN_IDX_OPERATINGSTATUS        	(0x63C0)    	// index of operating status
-#define CANOPEN_IDX_MESURINGSETTING        	(0x6384)    	// index of measuring step setting
-#define CANOPEN_IDX_OPERATINGPARAMETER      (0x6380)    	// index of operating parameter
+#define CANOPEN406_IDX_POSITION        		(0x6383)    	// index of diagnose
+#define CANOPEN406_IDX_DIAGNOSE        		(0x2117)    	// index of diagnose
+#define CANOPEN406_IDX_VELOCITY        		(0x2118)    	// index of velocity
+#define CANOPEN406_IDX_SPEEDSAMPLING        	(0x4001)    	// index of speed sampling interval [ms]
+#define CANOPEN406_IDX_OPERATINGSTATUS        	(0x63C0)    	// index of operating status
+#define CANOPEN406_IDX_MESURINGSETTING        	(0x6384)    	// index of measuring step setting
+#define CANOPEN406_IDX_OPERATINGPARAMETER      (0x6380)    	// index of operating parameter
 
 /* subindices for communication objects */
-#define CANOPEN_SUBIDX_VELOCITY_MIN     (1)         // subindex of minimum velocity
-#define CANOPEN_SUBIDX_VELOCITY_MAX     (2)         // subindex of maximum velocity
+#define CANOPEN406_SUBIDX_VELOCITY_MIN     (1)         // subindex of minimum velocity
+#define CANOPEN406_SUBIDX_VELOCITY_MAX     (2)         // subindex of maximum velocity
 
 /* data length for communication objects */
 //#define CANOPEN_LENGTH_OPEN         (4)

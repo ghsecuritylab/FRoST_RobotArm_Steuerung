@@ -71,6 +71,14 @@ void RobotArm_setAngle(uint8_t NodeId, uint16_t actualAngle, uint16_t tagetAngle
 void RobotArm_setSingleAngle(uint8_t NodeId, uint16_t actualAngle, uint16_t tagetAngle, uint16_t hysteresis, int32_t velocity);
 uint8_t RobotArm_setSingleAngleD(uint8_t NodeId, double actualAngle, double tagetAngle, double hysteresis, double velocity);
 
+//uint8_t isRobotArm_initEncodersSuccessfull(globalData_typeDef_robotArm* Check_Arm);
+//uint8_t isRobotArm_initeEncoders_SetUpSucessfull(canOpenNode_typeDef_Node* Node,uint8_t Node_id);
+//uint8_t isRobotArm_initMotorsSuccessful(globalData_typeDef_robotArm* Check_Arm);
+//uint8_t isRobotArm_initMotors_SetUpSucessfull(canOpenNode_typeDef_Node402* Node,uint8_t Node_id);
+canOpenNode_enumTypeDef_ApplicationError Arm_readControlWord(uint8_t NodeId);
+canOpenNode402_enumTypeDef_States Arm_readStateWord(uint8_t NodeId);
+uint32_t Arm_readVelocity(uint8_t NodeId);
+
 
 typedef enum{
 	Arm_State_Start

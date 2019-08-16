@@ -31,7 +31,7 @@ uint8_t boolschritt[5];
 
 /* test values trajectoy */
 static globalData_typeDef_robotArm_ARM_GS getAngles;
-static uint16_t setPointAngles[2][6] = {{0,0,0,0,18000,0},{0,0,0,0,27000,0}};
+//static uint16_t setPointAngles[2][6] = {{0,0,0,0,18000,0},{0,0,0,0,27000,0}};
 /* TEST VALUE'S */
 //messageRobotArmRX.yValue 					=	50;
 //messageRobotArmRX.maxJointVelocity 			=	10;
@@ -57,7 +57,6 @@ void RobotArm_updateState(void)
 	static globalData_typeDef_robotArm_GS_ARM messageRobotArmRX_old;
 	static globalData_typeDef_robotArm_GS_ARM messageRobotArmRX = {0};
 	messageRobotArmRX = globalDataStructures_getRobotArm_GS_ARM();
-	int size = 3;
 
 	/* FIXME TESTMODE VAR's */
 	messageRobotArmRX.mode = ROBOTARMMODE_IK;
@@ -739,7 +738,7 @@ void RobotArm_initEncoders(void)
 
 }
 
-
+/*
 
 uint8_t isRobotArm_initEncodersSuccessfull(globalData_typeDef_robotArm* Check_Arm)
 {
@@ -789,6 +788,8 @@ uint8_t isRobotArm_initMotors_SetUpSucessfull(canOpenNode_typeDef_Node402* Node,
 	if(canOpenNode_addInstance(&Node->NodeBasic, CL4E_initSDOsMotor2,sizeof(CL4E_initSDOsMotor2)/sizeof(canOpen_typeDef_SDOprimitive))!=APPLICATIONERROR_NONE) return 0;
 	return 1;
 }
+
+*/
 
 
 /* initialize the motors
@@ -899,6 +900,30 @@ void RobotArm_initMotors(void)
 //        // TODO something really bad
 //        Error_Handler();
 //    }
+}
+
+/* read state word and save state to node struct */
+canOpenNode402_enumTypeDef_States Arm_readStateWord(uint8_t NodeId)
+{
+    return canOpenNode402_readStateWord(NodeId);
+}
+
+canOpenNode_enumTypeDef_ApplicationError Arm_readControlWord(uint8_t NodeId)
+{
+    return canOpenNode402_readControlWord(NodeId);
+}
+
+uint32_t Arm_readVelocity(uint8_t NodeId)
+{
+	uint32_t result;
+	uint32_t* presult = &result;
+    size_t length;
+
+    if(canOpenNode_SdoRd(NodeId,0x3A04,0x01,presult,&length)!=APPLICATIONERROR_NONE)
+        *presult = 0x7FFFFFFF;
+
+    result=*presult;
+    return result;
 }
 
 

@@ -619,11 +619,11 @@ canOpenNode_enumTypeDef_ApplicationError canOpenNode_SdoRd(uint8_t NodeId, uint1
 // spezielle PDO's - eigenes mapping
 canOpenNode_enumTypeDef_ApplicationError canOpenNode_PdoWrUserCob(uint16_t cobId, int32_t dataMotorOdd, int32_t dataMotorEven)
 {
-
+	/*
     CAN_TxHeaderTypeDef CanTxHeader;
 	uint8_t data[8] = {0};
 
-    /* configure message header */
+    // configure message header
     CanTxHeader.StdId = cobId;
     CanTxHeader.DLC = 8;
     CanTxHeader.IDE = CAN_ID_STD;
@@ -643,7 +643,7 @@ canOpenNode_enumTypeDef_ApplicationError canOpenNode_PdoWrUserCob(uint16_t cobId
 	case 244: // motor 7&8
 		break;
 	default:
-		return; // no valid user cobId
+		return APPLICATIONERROR_DEFAULT_ERROR; // no valid user cobId
 		break;
 	}
 
@@ -655,7 +655,7 @@ canOpenNode_enumTypeDef_ApplicationError canOpenNode_PdoWrUserCob(uint16_t cobId
 	data[5] = (dataMotorEven >> 8) & 0xFF;
 	data[6] = (dataMotorEven >> 16) & 0xFF;
 	data[7] = (dataMotorEven >> 24) & 0xFF;
-
+*/
 
 //	/* FIXME TEST ME USER PDO MSG && new task's */
 //
@@ -698,7 +698,7 @@ canOpenNode_enumTypeDef_ApplicationError canOpenNode_PdoWrUserCob(uint16_t cobId
 //        /* if failed to get SdoWrRd Mutex -> application error */
 //        return APPLICATIONERROR_DEFAULT_ERROR;
 //	}
-//	return APPLICATIONERROR_NONE;
+	return APPLICATIONERROR_NONE;
 }
 
 void canOpenNode_MasterNmtWr(canOpen_enumTypedef_CMD_NMT CMD, uint8_t NodeId)

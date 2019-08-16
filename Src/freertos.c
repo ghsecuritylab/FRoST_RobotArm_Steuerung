@@ -944,16 +944,37 @@ void Callback01(void const * argument)
 
     void freertosTask_CanOpen_CyclicTask(void const * argument)
     {
-        for(;;)
-        {
-        	/* FIXME SE commented out */
-            /* check timeout */
-//            canOpenNode_checkTimeoutAllNodes();
-            /* check errors */
-//            canOpenNode_checkErrorAllNodes();
-            /* FIXME SE set canOpen cyclic time up (from 500 to 5000) */
-            osDelay(5000);
-        }
+		/* initialize motors at startup */
+		//PowerTrain_initMotors();
+		/* Infinite loop */
+		for(;;)
+		{
+			// if motor/encoder init FIXME
+			if(true)
+			{
+				// read state
+				Arm_readStateWord(0x21);
+				Arm_readStateWord(0x22);
+				Arm_readStateWord(0x23);
+				Arm_readStateWord(0x24);
+				Arm_readStateWord(0x25);
+
+				// read mode
+				Arm_readControlWord(0x21);
+				Arm_readControlWord(0x22);
+				Arm_readControlWord(0x23);
+				Arm_readControlWord(0x24);
+				Arm_readControlWord(0x25);
+
+				// read velocity
+				Arm_readVelocity(0x21);
+				Arm_readVelocity(0x22);
+				Arm_readVelocity(0x23);
+				Arm_readVelocity(0x24);
+				Arm_readVelocity(0x25);
+			}
+			osDelay(200);
+		}
     }
 
 #endif // FREERTOS_CANOPENNODE
