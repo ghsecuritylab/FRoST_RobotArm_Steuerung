@@ -51,15 +51,29 @@ static globalData_typeDef_robotArm_ARM_GS getAngles;
  * 		copy global data structure, first check mode
  * 		and then do some operations;
  */
+globalData_typeDef_robotArm RobotArm_SetParameter(globalData_typeDef_robotArm_GS_ARM RX,globalData_typeDef_robotArm_ARM_GS TX)
+{
+	globalData_typeDef_robotArm result;
+
+
+	return result;
+}
+
 void RobotArm_updateState(void)
 {
-	/* copy global data */
+	// copy global data
 	static globalData_typeDef_robotArm_GS_ARM messageRobotArmRX_old;
 	static globalData_typeDef_robotArm_GS_ARM messageRobotArmRX = {0};
 	messageRobotArmRX = globalDataStructures_getRobotArm_GS_ARM();
+	static globalData_typeDef_robotArm_ARM_GS messageRobotArmTX = {0};
+	messageRobotArmTX = globalDataStructures_getRobotArm_ARM_GS();
 
 	/* FIXME TESTMODE VAR's */
 	messageRobotArmRX.mode = ROBOTARMMODE_IK;
+
+	// Set Arm Struct
+	globalData_typeDef_robotArm RobotArm;
+	RobotArm = RobotArm_SetParameter(messageRobotArmRX,messageRobotArmTX);
 
 	static uint8_t AxisNodeId;
 	Node = (canOpenNode_typeDef_Node402*) canOpenNodeInstances[AxisNodeId];
@@ -117,8 +131,6 @@ void RobotArm_updateState(void)
 
     		case ROBOTARMMODE_IK:
 				// control hole robot arm
-    			/* TODO WORK HERE 10082019 */
-
     			getAngles = globalDataStructures_getRobotArm_ARM_GS();
 
     			static uint32_t zonk3000 = 0;
@@ -144,33 +156,6 @@ void RobotArm_updateState(void)
 				RobotArm_setSingleAngle(NODE_ID_MOTOR_4, getAngles.actualJointAngle4, setPointAxis4, 550, 20);
 				RobotArm_setSingleAngle(NODE_ID_MOTOR_5, getAngles.actualJointAngle5, setPointAxis5, 1550, 1);
 
-
-//RobotArm_setAngle(uint8_t NodeId, uint16_t actualAngle, uint16_t tagetAngle, uint16_t hysteresis, int32_t velocity)
-									//   q2     q3    q4
-
-//				if(aktuellerSchritt < 4)
-//				{
-//					uint16_t target[4][4]={	{18000,22000,9000,0},
-//											{19471,18381,14000,0},
-//											{20000,15989,10000,0},
-//											{19110,23257,18000,0}
-//											};
-//
-//					uint16_t setPointAxis2 = target[aktuellerSchritt][0]; // 18500
-//					uint16_t setPointAxis3 = target[aktuellerSchritt][1]; // 18000
-//					uint16_t setPointAxis4 = target[aktuellerSchritt][2]; // 10000
-//					uint16_t setPointAxis5 = target[aktuellerSchritt][3]; // 8520
-
-//					if(getAngles.actualJointAngle2 == 0){return;}
-//					RobotArm_setAngle(NODE_ID_MOTOR_2, getAngles.actualJointAngle2, setPointAxis2, 250, 40);
-//					if(getAngles.actualJointAngle3 == 0){return;}
-//					RobotArm_setAngle(NODE_ID_MOTOR_3, getAngles.actualJointAngle3, setPointAxis3, 500, 35);
-//					if(getAngles.actualJointAngle4 == 0){return;}
-//					RobotArm_setAngle(NODE_ID_MOTOR_4, getAngles.actualJointAngle4, setPointAxis4, 600, 20);
-//					if(getAngles.actualJointAngle5 == 0){return;}
-//					RobotArm_setAngle(NODE_ID_MOTOR_5, getAngles.actualJointAngle5, setPointAxis5, 750, 1);
-//				}
-
     	    	break;
     		case ROBOTARMMODE_TEACHED_POS:
     			break;
@@ -188,7 +173,7 @@ void RobotArm_updateState(void)
 
 void RobotArm_updateEncoder(uint8_t NodeId, uint16_t data)
 {
-	/* copy global data structure */
+	// Get
 	static globalData_typeDef_robotArm_ARM_GS messageRobotArmTX = {0};
 	messageRobotArmTX = globalDataStructures_getRobotArm_ARM_GS();
 
@@ -227,6 +212,9 @@ void RobotArm_updateEncoder(uint8_t NodeId, uint16_t data)
 	{
 		Error_Handler();
 	}
+
+
+	// Set
     if(globalDataStructures_setRobotArm_ARM_GS(messageRobotArmTX)!=GLOBAL_DATA_STRUCT_SET_OK)
     {
     	Error_Handler();

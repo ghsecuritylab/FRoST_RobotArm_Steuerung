@@ -25,8 +25,8 @@
 
 /*Global variables ---------------------------------------------------------*/
 
-//volatile static globalData_typeDef_allData 						globalData_allData					;
-//volatile static globalData_typeDef_DataToGS						globalData_allDataToGs				;
+//volatile static globalData_typeDef_allData 							globalData_allData					;
+//volatile static globalData_typeDef_DataToGS							globalData_allDataToGs				;
 volatile static globalData_typeDef_drill_DRILL_GS						globalData_drill_drillToGs			;
 volatile static globalData_typeDef_drill_GS_DRILL						globalData_drill_gsToDrill			;
 volatile static globalData_typeDef_robotArm_ARM_GS						globalData_arm_armToGs				;
