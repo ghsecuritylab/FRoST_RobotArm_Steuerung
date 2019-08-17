@@ -29,7 +29,7 @@
 	/* FIXME: set mode - test on/off */
 #define TEST_MODE_ARM 1
 
-
+#define ROBOTARM_DEATHCENTERPOINT	15
 #define NODE_ID_MOTOR_TEST  0x25
 #define NODE_ID_MOTOR_1		0x21
 #define NODE_ID_MOTOR_2		0x22
@@ -78,25 +78,23 @@ uint8_t RobotArm_setSingleAngleD(uint8_t NodeId, double actualAngle, double tage
 canOpenNode_enumTypeDef_ApplicationError Arm_readControlWord(uint8_t NodeId);
 canOpenNode402_enumTypeDef_States Arm_readStateWord(uint8_t NodeId);
 uint32_t Arm_readVelocity(uint8_t NodeId);
-
+void RobotArm_updateMotor(void);
 void RobotArm_updateBSData(void);
 
 
 typedef enum{
 	Arm_State_Start
 	,Arm_State_Init
-	,Arm_State_SwitchOn
-	,Arm_State_Operation_SetParameter
-	,Arm_State_Operation_SetParameterVelocity
-	,Arm_State_Operation_Motion
-	,Arm_State_Operation_End
-	,Arm_State_Init_Error
-	,Arm_State_SwitchOn_Error
-	,Arm_State_Operation_SetParameter_Error
-	,Arm_State_Operation_Motion_Error
-	,Arm_State_Operation_End_Error
-	,Arm_State_Operation_SetParameterVelocity_Error
-	,Arm_State_Error
+	,Arm_State_Idle
+	,Arm_State_default
+	,Arm_State_run
+	,Arm_State_stop
+	,Arm_State_Error_Start
+	,Arm_State_Error_Init
+	,Arm_State_Error_Idle
+	,Arm_State_Error_default
+	,Arm_State_Error_run
+	,Arm_State_Error_stop
 	,Arm_State_UndefinedState_Error
 }Arm_enumTypeDef_States;
 
@@ -111,8 +109,8 @@ typedef enum
 
 typedef struct
 {
-	canOpenNode_typeDef_Node402 Motor;
-	canOpenNode_typeDef_Node406 Encoder;
+	canOpenNode_typeDef_Node402 				Motor;
+	canOpenNode_typeDef_Node406 				Encoder;
 }globalData_typeDef_robotArm_Achse;
 
 typedef struct
@@ -123,18 +121,13 @@ typedef struct
 	globalData_enumTypeDef_robotArmMode 		Crrt_mode_Soll;
 	globalData_enumTypeDef_robotArmMode 		Crrt_mode_Ist;
 
-	// Test Var
+	// Mode operation
 	int8_t 										Do_Something;
-
-	globalData_typeDef_robotArm_ARM_GS			robotArm_ARM_GS;
-	globalData_typeDef_robotArm_GS_ARM			robotArm_GS_ARM;
+	uint16_t 									Schritte[2][6];			// IK Ergebnise
 
 	// Build
 	canOpenNode_typeDef_Node402 				robotArm_Motor6;		// Tool
-	globalData_typeDef_robotArm_Achse			Achse[5];
-
-	// IK Ergebnise
-	uint16_t 									Schritte[2][6];
+	globalData_typeDef_robotArm_Achse			Achse[5];				// Achsen
 
 }globalData_typeDef_robotArm;
 

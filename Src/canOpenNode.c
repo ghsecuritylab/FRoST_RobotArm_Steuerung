@@ -145,6 +145,7 @@ canOpenNode_enumTypeDef_ApplicationError canOpenNode_packetReceived(uint16_t cob
 				static uint16_t encoderRawData;
 				encoderRawData = ((uint16_t)(data[1]) << 8) | (uint16_t)(data[0]);
 				RobotArm_updateEncoder(NodeId, encoderRawData);
+				// verstehe ich nicht TODO JJ Help
 			}
 			osSemaphoreRelease(semCanOpenSDORXHandle);
 			break;

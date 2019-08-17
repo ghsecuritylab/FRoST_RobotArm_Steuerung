@@ -208,6 +208,8 @@ osSemaphoreId s_freertosHandle_armIk;   //Added SE 12.08.2019
 osSemaphoreId s_freertosHandle_armTp;
 osSemaphoreId s_freertosHandle_armAxis;
 osSemaphoreId s_freertosHandle_armCheckEncoder;
+osSemaphoreId s_freertosHandle_armstatemachine;
+
 
 /*Add task handle for processing rover Data or do something else important */ /*MTR 18.06.2019*/
 osThreadId t_freertosHandle_DemoMode_tx;					/* Added MTR 20.06.2019*/
@@ -232,6 +234,7 @@ osThreadId t_freertosHandle_RobotArm_modeIk;				/* Added SE 12.08.2019*/
 osThreadId t_freertosHandle_RobotArm_modeTp;				/* Added SE 12.08.2019*/
 osThreadId t_freertosHandle_RobotArm_modeAxis;				/* Added SE 12.08.2019*/
 osThreadId t_freertosHandle_RobotArm_checkEncoderLimits;	/* Added SE 12.08.2019*/
+osThreadId t_freertosHandle_RobotArm_stateMachine;	/* Added SE 12.08.2019*/
 osThreadId t_freertosHandle_Drill_GS_DRILL;					//RX - GS
 osThreadId t_freertosHandle_Drill_DRILL_GS;					//TX - GS
 osThreadId t_freertosHandle_CanOpen_Cyclic;                 //cyclic CanOpen task
@@ -303,6 +306,8 @@ void freertosTask_arm_modeIk(void const* argument); // IK mode task
 void freertosTask_arm_modeTp(void const* argument); // teached position mode task
 void freertosTask_arm_modeAxis(void const* argument); // IK mode task
 void freertosTask_arm_checkEncoderLimits(void const* argument); // IK mode task
+void freertosTask_arm_statemachine(void const* argument); // state machine task
+
 #endif
 
 /*Drill tasks  ----------------------------*/
@@ -604,6 +609,11 @@ void StartDefaultTask(void const * argument)
   	  s_freertosHandle_armCheckEncoder = osSemaphoreCreate(osSemaphore(s_freertosHandle_armCheckEncoder), 1);
  	  osSemaphoreRelease(s_freertosHandle_armCheckEncoder);
 
+ 	  // FIXME JJ 17082019 statemachine
+  	  //osSemaphoreDef (s_freertosHandle_armstateMachine);
+ 	 //s_freertosHandle_armstatemachine = osSemaphoreCreate(osSemaphore(s_freertosHandle_armstatemachine), 1);
+ 	 //osSemaphoreRelease(s_freertosHandle_armstatemachine);
+
  	  /* FIXME SE here INIT functions */
       RobotArm_init();
 
@@ -634,6 +644,10 @@ void StartDefaultTask(void const * argument)
  	  /*Task freertosTask_arm */ //
  	  osThreadDef(t_RobotArm_checkEncoder, freertosTask_arm_checkEncoderLimits, osPriorityNormal, 0, 128);
  	  t_freertosHandle_RobotArm_checkEncoderLimits = osThreadCreate(osThread(t_RobotArm_checkEncoder), NULL);
+
+ 	  /*Task freertosTask_arm */ // FIXME JJ 17082019
+ 	  //osThreadDef(t_RobotArm_stateMachine, freertosTask_arm_stateMachine, osPriorityNormal, 0, 128);
+ 	 //t_freertosHandle_RobotArm_stateMachine = osThreadCreate(osThread(t_RobotArm_stateMachine), NULL);
 
    #endif
 
@@ -952,26 +966,27 @@ void Callback01(void const * argument)
 			// if motor/encoder init FIXME
 			if(true)
 			{
-				// read state
-				Arm_readStateWord(0x21);
-				Arm_readStateWord(0x22);
-				Arm_readStateWord(0x23);
-				Arm_readStateWord(0x24);
-				Arm_readStateWord(0x25);
-
-				// read mode
-				Arm_readControlWord(0x21);
-				Arm_readControlWord(0x22);
-				Arm_readControlWord(0x23);
-				Arm_readControlWord(0x24);
-				Arm_readControlWord(0x25);
-
-				// read velocity
-				Arm_readVelocity(0x21);
-				Arm_readVelocity(0x22);
-				Arm_readVelocity(0x23);
-				Arm_readVelocity(0x24);
-				Arm_readVelocity(0x25);
+				RobotArm_updateMotor();
+//				// read state
+//				Arm_readStateWord(0x21);
+//				Arm_readStateWord(0x22);
+//				Arm_readStateWord(0x23);
+//				Arm_readStateWord(0x24);
+//				Arm_readStateWord(0x25);
+//
+//				// read mode
+//				Arm_readControlWord(0x21);
+//				Arm_readControlWord(0x22);
+//				Arm_readControlWord(0x23);
+//				Arm_readControlWord(0x24);
+//				Arm_readControlWord(0x25);
+//
+//				// read velocity
+//				Arm_readVelocity(0x21);
+//				Arm_readVelocity(0x22);
+//				Arm_readVelocity(0x23);
+//				Arm_readVelocity(0x24);
+//				Arm_readVelocity(0x25);
 			}
 			osDelay(200);
 		}
@@ -1475,6 +1490,25 @@ void Callback01(void const * argument)
 			//..
 		}
 	}
+
+	/* FIXME JJ 17082019 state Machine Task
+	void freertosTask_arm_stateMachine(void const* argument)
+	{
+
+		//codes does something e.g. create variables
+		for(;;)
+		{
+//			Wait for incoming signal / data
+//			if (osSemaphoreWait(s_freertosHandle_armCheckEncoder,osWaitForever)== osOK)
+//			{
+//
+//			}
+			osDelay(1000); //Give back the control to the scheduler
+			//do something when the OS gives runtime
+			//..
+		}
+	}
+	*/
 
 #endif
 
