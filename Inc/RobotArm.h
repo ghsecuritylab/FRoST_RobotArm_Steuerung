@@ -79,6 +79,8 @@ canOpenNode_enumTypeDef_ApplicationError Arm_readControlWord(uint8_t NodeId);
 canOpenNode402_enumTypeDef_States Arm_readStateWord(uint8_t NodeId);
 uint32_t Arm_readVelocity(uint8_t NodeId);
 
+void RobotArm_updateBSData(void);
+
 
 typedef enum{
 	Arm_State_Start

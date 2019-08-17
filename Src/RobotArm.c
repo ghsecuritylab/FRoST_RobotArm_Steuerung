@@ -59,6 +59,118 @@ globalData_typeDef_robotArm RobotArm_SetParameter(globalData_typeDef_robotArm_GS
 	return result;
 }
 
+void RobotArm_updateBSData(void)
+{
+	// copy global data
+	static globalData_typeDef_robotArm_GS_ARM messageRobotArmRX_old;
+	static globalData_typeDef_robotArm_GS_ARM messageRobotArmRX = {0};
+	messageRobotArmRX = globalDataStructures_getRobotArm_GS_ARM();
+	static globalData_typeDef_robotArm_ARM_GS messageRobotArmTX = {0};
+	messageRobotArmTX = globalDataStructures_getRobotArm_ARM_GS();
+
+	/* FIXME TESTMODE VAR's */
+	messageRobotArmRX.mode = ROBOTARMMODE_IK;
+
+	// Set Arm Struct
+	globalData_typeDef_robotArm RobotArm;
+	RobotArm = RobotArm_SetParameter(messageRobotArmRX,messageRobotArmTX);
+
+	static uint8_t AxisNodeId;
+	Node = (canOpenNode_typeDef_Node402*) canOpenNodeInstances[AxisNodeId];
+
+	if(messageRobotArmRX.dataID==GLOBALDATA_ID_ARM)
+    {
+
+		RobotArm_setLinearActuatorDutyCycle(messageRobotArmRX.microLinearActorPercent, messageRobotArmRX.microLinearActorState);
+		RobotArm_setVelocityButtons(messageRobotArmRX.targetJointVelocity5,  messageRobotArmRX.Axis5State, NODE_ID_MOTOR_5);
+		//      	    RobotArm_setVelocityButtons(messageRobotArmRX.velocityEndEffector,  messageRobotArmRX.endEffectorState, NODE_ID_MOTOR_6);
+
+
+    	/* check if mode has changed */
+    	if(messageRobotArmRX_old.mode != messageRobotArmRX.mode)
+    	{
+    		switch (messageRobotArmRX_old.mode)
+    		{
+    			case ROBOTARMMODE_DISABLE:
+				case ROBOTARMMODE_AXES:
+    				// set quickstop
+    				Node->Node402State = CANOPEN402_STATE_QUICK_STOP_ACTIVE;
+					if(canOpenNode_SdoWr(AxisNodeId,0x6040,0,0x0002,2)!=APPLICATIONERROR_NONE){};//{return;}
+					//
+					break;
+				case ROBOTARMMODE_IK:
+					break;
+				case ROBOTARMMODE_TEACHED_POS:
+					break;
+				default:
+					break;
+    		}
+    	}
+
+    	/* check mode */
+    	switch (messageRobotArmRX.mode)
+    	{
+    		case ROBOTARMMODE_DISABLE:
+    			RobotArm_setLinearActuatorDutyCycle(0, ROBOTARM2BUTTONS_DISABLE);
+    	    	//
+				break;
+    		case ROBOTARMMODE_AXES: /* control single axes */
+				/*  */
+    			if((messageRobotArmRX.ArmAxis+0x20 != AxisNodeId) || (AxisNodeId < NODE_ID_MOTOR_1 || AxisNodeId > NODE_ID_MOTOR_6))
+    			{
+    				// set quickstop
+    				Node->Node402State = CANOPEN402_STATE_QUICK_STOP_ACTIVE;
+    				if(canOpenNode_SdoWr(AxisNodeId,0x6040,0,0x0002,2)!=APPLICATIONERROR_NONE){};//{return;}
+    				AxisNodeId = messageRobotArmRX.ArmAxis + 0x20;
+    				return;
+    			}
+				AxisNodeId = messageRobotArmRX.ArmAxis + 0x20;
+				RobotArm_joystick2rpm(messageRobotArmRX.yValue, messageRobotArmRX.maxJointVelocity, AxisNodeId);
+				RobotArm_setPSM(AxisNodeId);
+				break;
+
+    		case ROBOTARMMODE_IK:
+				// control hole robot arm
+    			getAngles = globalDataStructures_getRobotArm_ARM_GS();
+
+    			static uint32_t zonk3000 = 0;
+				zonk3000++;
+				if(zonk3000 <= 2)
+				{
+					canOpenNode_MasterNmtWr(0x01, 0);
+				}
+				if(zonk3000 < 50000){zonk3000 = 20;}
+
+				if(getAngles.actualJointAngle2 == 0){return;}
+				if(getAngles.actualJointAngle3 == 0){return;}
+				if(getAngles.actualJointAngle4 == 0){return;}
+//				if(getAngles.actualJointAngle5 == 0){return;}
+
+				uint16_t setPointAxis2 = 18000;
+				uint16_t setPointAxis3 = 26000;
+				uint16_t setPointAxis4 = 9000;
+				uint16_t setPointAxis5 = 18000;
+
+				RobotArm_setSingleAngle(NODE_ID_MOTOR_2, getAngles.actualJointAngle2, setPointAxis2, 350, 40);
+				RobotArm_setSingleAngle(NODE_ID_MOTOR_3, getAngles.actualJointAngle3, setPointAxis3, 450, 35);
+				RobotArm_setSingleAngle(NODE_ID_MOTOR_4, getAngles.actualJointAngle4, setPointAxis4, 550, 20);
+				RobotArm_setSingleAngle(NODE_ID_MOTOR_5, getAngles.actualJointAngle5, setPointAxis5, 1550, 1);
+
+    	    	break;
+    		case ROBOTARMMODE_TEACHED_POS:
+    			break;
+    		default:
+    			// set error and switch off motor's
+    			break;
+    	}
+    }
+    else
+    {
+        Error_Handler();
+    }
+    messageRobotArmRX_old = messageRobotArmRX;
+}
+
 void RobotArm_updateState(void)
 {
 	// copy global data

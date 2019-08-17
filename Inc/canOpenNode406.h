@@ -16,42 +16,93 @@
  */
 
 
-/* possible modes of operation
- * parameter 0x6060.00 */
+/* indices for communication objects */
+#define CANOPEN406_IDX_POSITION        			(0x6383)    	// index of diagnose
+#define CANOPEN406_IDX_DIAGNOSE        			(0x2117)    	// index of diagnose
+#define CANOPEN406_IDX_VELOCITY        			(0x2118)    	// index of velocity
+#define CANOPEN406_IDX_SPEEDSAMPLING        	(0x4001)    	// index of speed sampling interval [ms]
+#define CANOPEN406_IDX_OPERATINGSTATUS        	(0x63C0)    	// index of operating status
+#define CANOPEN406_IDX_MESURINGSETTING        	(0x6384)    	// index of measuring step setting
+#define CANOPEN406_IDX_ALARM			      	(0x6503)    	// index of operating parameter
+#define CANOPEN406_IDX_WARNING 			     	(0x6505)    	// index of operating parameter
+#define CANOPEN406_IDX_ERROR      				(0x1001)    	// index of operating parameter
+#define CANOPEN406_IDX_BAUDRATE      			(0x2100)    	// index of baudrate
+#define CANOPEN406_IDX_NODEID      				(0x2101)    	// index of node ID
+#define CANOPEN406_IDX_SAVE      				(0x1010)    	// index of save
+
+
+/* subindices for communication objects */
+#define CANOPEN406_SUBIDX_SAVE_ALL     			(1)         	// subindex of save all parameter
+#define CANOPEN406_SUBIDX_SAVE_COMMUNICATION    (2)         	// subindex of save communication parameter
+#define CANOPEN406_SUBIDX_SAVE_APPLICATION     	(3)         	// subindex of save application parameter
+#define CANOPEN406_SUBIDX_SAVE_MANUFACTUR 	    (4)         	// subindex of save manucfactor parameter
+
+/* data length for communication objects */
+//#define CANOPEN_LENGTH_EMERGENCYMESSAGE         (8)
+
+
+
+// supported NMT commands: 1014h
 typedef enum
 {
-     NODE406MODE_MODE_OFF                       = 0x00
-    ,NODE406MODE_PROFILE_POSITION               = 0x01
-    ,NODE406MODE_VELOCITY                       = 0x02
-    ,NODE406MODE_PROFILE_VELOCITY               = 0x03
-    ,NODE406MODE_PROFILE_TORQUE                 = 0x04
+	CANOPEN406_NMT_START						= 0x01
+	,CANOPEN406_NMT_PREOPERATIONAL				= 0x80
+	,CANOPEN406_NMT_STOP						= 0x02
+	,CANOPEN406_NMT_RESET						= 0x81
+	,CANOPEN406_NMT_COMMUNICATION_RESET			= 0x82
+}canOpenNode406_enumTypeDef_NMTCMD;
 
-    ,NODE406MODE_HOMING                         = 0x06
-    ,NODE406MODE_INTERPOLATED_POSITION          = 0x07
-    ,NODE406MODE_CYCLIC_SYNCHRONOUS_POSITION    = 0x08
-    ,NODE406MODE_OFF                            = 0xFF  // -1
-}canOpenNode_enumTypeDef_Node406Mode;
 
-/* parameters and values for op mode velocity */
+typedef enum
+{
+	CANOPEN406_ERROR_RESET						= 0x0000
+	,CANOPEN406_ERROR_TEMPERATUR				= 0x4200
+	,CANOPEN406_ERROR_EEPROM					= 0x5100
+	,CANOPEN406_ERROR_SOFTWARE 					= 0x6100
+	,CANOPEN406_ERROR_COMMUNICATION 			= 0x8100
+	,CANOPEN406_ERROR_CAN_RX_OVERFLOW 			= 0x8110
+	,CANOPEN406_ERROR_CAN_PASSIV_MODE 			= 0x8120
+	,CANOPEN406_ERROR_LIFEGUARD_HEARTBEAT 		= 0x8130
+	,CANOPEN406_ERROR_BATTERYLOW 				= 0xFF00
+	,CANOPEN406_ERROR_BATTERYEMPTY 				= 0xFF01
+	,CANOPEN406_ERROR_WEAKMAGNETICFIELD 		= 0xFF02
+	,CANOPEN406_ERROR_INTERNALCOMMUNICATION		= 0xFF04
+	,CANOPEN406_ERROR_SPEED 					= 0xFF05
+	,CANOPEN406_ERROR_SINGLETURN_OUT_RANGE 		= 0xFF06
+	,CANOPEN406_ERROR_OUT_OF_SYNC				= 0xFF07
+	,CANOPEN406_ERROR_MANUFACTRUE  				= 0xFF08
+
+}canOpenNode406_enumTypeDef_ERRORCODE;
+
+
+typedef struct
+{
+    uint16_t FreqExc       						:1;     			// 0
+    uint16_t WDT  								:1;     			// 1
+    uint16_t OpTimeLim      					:1;     			// 2
+    uint16_t BattLow							:1;     			// 3
+    uint16_t MountErr							:1;     			// 4
+    uint16_t MTSys								:1;     			// 5
+    uint16_t STSys								:1;     			// 6
+    uint16_t MTSuper     						:1;    				// 7
+    uint16_t reserved1      					:1;     			// 8
+    uint16_t reserved2							:1;     			// 9
+    uint16_t reserved3      					:1;     			// 10
+    uint16_t reserved4      					:1;     			// 11
+    uint16_t CommErr        					:1;     			// 12
+    uint16_t TempErr        					:1;     			// 13
+    uint16_t PosErr      						:1;     			// 14
+    uint16_t BattEmpt       					:1;     			// 15
+}canOpenNode_typeDef_Diagnose;
+
+
+// parameters and values for op mode velocity
 typedef struct
 {
 	int32_t	 position_actual;
     int32_t  velocity_actual;
-
 }canOpenNode_typeDef_ValuesEncoder;
 
-/* node state, read from state word 0x6041.00 */
-typedef enum
-{
-     CANOPEN406_STATE_NOT_READY_TO_SWITCH_ON
-    ,CANOPEN406_STATE_SWITCH_ON_DISABLED
-    ,CANOPEN406_STATE_READY_TO_SWITCH_ON
-    ,CANOPEN406_STATE_SWITCHED_ON
-    ,CANOPEN406_STATE_OPERATION_ENABLED
-    ,CANOPEN406_STATE_QUICK_STOP_ACTIVE
-    ,CANOPEN406_STATE_FAULT_REACTION_ACTIVE
-    ,CANOPEN406_STATE_FAULT
-}canOpenNode406_enumTypeDef_States;
 
 typedef struct
 {
@@ -59,9 +110,9 @@ typedef struct
      * basic node, will be registered at canOpenNode */
     canOpenNode_typeDef_Node NodeBasic;
     /* mode of operation */
-    canOpenNode_enumTypeDef_Node406Mode Node406Mode;
+    //canOpenNode_enumTypeDef_Node406Mode Node406Mode;
     /* actual state */
-    canOpenNode406_enumTypeDef_States Node406State;
+    //canOpenNode406_enumTypeDef_States Node406State;
     /* information corresponding to the mode of operation */
     union
     {
@@ -71,86 +122,13 @@ typedef struct
 }canOpenNode_typeDef_Node406;
 
 
-/* indices for communication objects */
-#define CANOPEN406_IDX_POSITION        		(0x6383)    	// index of diagnose
-#define CANOPEN406_IDX_DIAGNOSE        		(0x2117)    	// index of diagnose
-#define CANOPEN406_IDX_VELOCITY        		(0x2118)    	// index of velocity
-#define CANOPEN406_IDX_SPEEDSAMPLING        	(0x4001)    	// index of speed sampling interval [ms]
-#define CANOPEN406_IDX_OPERATINGSTATUS        	(0x63C0)    	// index of operating status
-#define CANOPEN406_IDX_MESURINGSETTING        	(0x6384)    	// index of measuring step setting
-#define CANOPEN406_IDX_OPERATINGPARAMETER      (0x6380)    	// index of operating parameter
 
-/* subindices for communication objects */
-#define CANOPEN406_SUBIDX_VELOCITY_MIN     (1)         // subindex of minimum velocity
-#define CANOPEN406_SUBIDX_VELOCITY_MAX     (2)         // subindex of maximum velocity
-
-/* data length for communication objects */
-//#define CANOPEN_LENGTH_OPEN         (4)
-
-/* parameters for interpreting error content */
-#define CANOPENNODE406_STATE_WORD_NOT_READY_TO_SWITCH_ON_MASK   (0x4F)
-
-
-/* parameters for interpreting warning content */
-#define CANOPENNODE406_STATE_WORD_NOT_READY_TO_SWITCH_ON_MASK   (0x4F)
-
-/*
-typedef struct
-{
-    union
-    {
-        uint16_t data;
-        struct
-        {
-            uint16_t readyToSwitchOn    :1;     // 0
-            uint16_t switchedOn         :1;     // 1
-            uint16_t operationEnabled   :1;     // 2
-            uint16_t fault              :1;     // 3
-            uint16_t voltageEnabled     :1;     // 4
-            uint16_t quickStop          :1;     // 5
-            uint16_t switchOnDisabled   :1;     // 6
-            uint16_t warning            :1;     // 7
-            uint16_t unused1            :1;     // 8
-            uint16_t remote             :1;     // 9
-            uint16_t targetReached      :1;     // 10
-            uint16_t internalLimitActive:1;     // 11
-            uint16_t OpModeSpecific1    :1;     // 12
-            uint16_t OpModeSpecific2    :1;     // 13
-            uint16_t unused2            :1;     // 14
-            uint16_t unused3            :1;     // 15
-        };
-    };
-}canOpenNode_typeDef_StateWord;
-
-// parameters for interpreting control word content
-typedef struct
-{
-    uint16_t switchOn       :1;     // 0
-    uint16_t enableVoltage  :1;     // 1
-    uint16_t quickstop      :1;     // 2
-    uint16_t enableOperation:1;     // 3
-    uint16_t OpModeSpecific1:1;     // 4
-    uint16_t OpModeSpecific2:1;     // 5
-    uint16_t OpModeSpecific3:1;     // 6
-    uint16_t faultReset     :1;     // 7
-    uint16_t halt           :1;     // 8
-    uint16_t OpModeSpecific4:1;     // 9
-    uint16_t unused1        :1;     // 10
-    uint16_t unused2        :1;     // 11
-    uint16_t unused3        :1;     // 12
-    uint16_t unused4        :1;     // 13
-    uint16_t unused5        :1;     // 14
-    uint16_t unused6        :1;     // 15
-}canOpenNode_typeDef_ControlWord;
-*/
 
 /* sends set of SDOs to initialize the node with parameters in velocity struct
  * call after initializing node via canOpenNode */
-canOpenNode_enumTypeDef_ApplicationError canOpenNode406_sendInitVelocityValues(canOpenNode_typeDef_Node406* Node);
-/* read state word by SDO */
-canOpenNode406_enumTypeDef_States canOpenNode406_readStateWord(uint8_t NodeId);
+canOpenNode_enumTypeDef_ApplicationError canOpenNode406_sendInitValues(canOpenNode_typeDef_Node406* Node);
 /* read control word by SDO */
-canOpenNode_enumTypeDef_ApplicationError canOpenNode406_readControlWord(uint8_t NodeId);
+canOpenNode_enumTypeDef_ApplicationError canOpenNode406_readDiagnose(uint8_t NodeId);
 
 
-#endif /* CANOPENNODE402_H_ */
+#endif /* CANOPENNODE406_H_ */

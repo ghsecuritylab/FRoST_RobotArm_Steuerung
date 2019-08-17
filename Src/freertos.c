@@ -1309,15 +1309,12 @@ void Callback01(void const * argument)
 		for(;;)
 		{
 
-
-
 			encoder_actualAngleDegree = globalDataStructures_getRobotArm_ARM_GS();
 			double q2actual = (double)encoder_actualAngleDegree.actualJointAngle2/100;
 			double q3actual = (double)encoder_actualAngleDegree.actualJointAngle3/100;
 			double q4actual = (double)encoder_actualAngleDegree.actualJointAngle4/100;
 			targetState[0]=0; targetState[1]=0; targetState[2]=0; targetState[3]=0; targetState[4]=0;
 			hysterese = 3.5;
-
 
 			// check if actual angles are
 			if(((uint16_t)q2actual == 0) || ((uint16_t)q3actual == 0) || ((uint16_t)q4actual == 0))
