@@ -1347,7 +1347,7 @@ lwip_netconn_do_listen(void *m)
             } else {
               /* delete the recvmbox and allocate the acceptmbox */
               if (sys_mbox_valid(&msg->conn->recvmbox)) {
-                /** @todo: should we drain the recvmbox here? */
+                /**  */
                 sys_mbox_free(&msg->conn->recvmbox);
                 sys_mbox_set_invalid(&msg->conn->recvmbox);
               }

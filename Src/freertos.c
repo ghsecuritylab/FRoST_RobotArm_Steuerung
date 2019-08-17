@@ -966,7 +966,8 @@ void Callback01(void const * argument)
 			// if motor/encoder init FIXME
 			if(true)
 			{
-				RobotArm_updateMotor();
+				// TODO JJ 18082019 reine TX Nachrichten sollten hier verwendet werden
+				//RobotArm_updateMotor();
 //				// read state
 //				Arm_readStateWord(0x21);
 //				Arm_readStateWord(0x22);
@@ -1318,7 +1319,6 @@ void Callback01(void const * argument)
 		static uint8_t status = 0;
 		static uint8_t targetState[5] = {0};
 		static double hysterese;
-
 
 		/* Infinite loop -------------------------------*/
 		for(;;)

@@ -247,7 +247,7 @@ struct tcp_pcb {
   /* RTT (round trip time) estimation variables */
   u32_t rttest; /* RTT estimate in 500ms ticks */
   u32_t rtseq;  /* sequence number being timed */
-  s16_t sa, sv; /* @todo document this */
+  s16_t sa, sv;
 
   s16_t rto;    /* retransmission time-out */
   u8_t nrtx;    /* number of retransmissions */

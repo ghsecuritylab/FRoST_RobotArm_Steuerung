@@ -463,7 +463,6 @@ igmp_joingroup(const ip4_addr_t *ifaddr, const ip4_addr_t *groupaddr)
       err = igmp_joingroup_netif(netif, groupaddr);
       if (err != ERR_OK) {
         /* Return an error even if some network interfaces are joined */
-        /** @todo undo any other netif already joined */
         return err;
       }
     }

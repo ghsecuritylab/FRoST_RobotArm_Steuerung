@@ -121,7 +121,6 @@ icmp6_input(struct pbuf *p, struct netif *inp)
     break;
   case ICMP6_TYPE_RS:
 #if LWIP_IPV6_FORWARD
-    /* @todo implement router functionality */
 #endif
     break;
 #if LWIP_IPV6_MLD

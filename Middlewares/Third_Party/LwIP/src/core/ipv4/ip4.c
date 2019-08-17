@@ -715,7 +715,7 @@ ip4_input(struct pbuf *p, struct netif *inp)
     }
   }
 
-  /* @todo: this is not really necessary... */
+
   ip_data.current_netif = NULL;
   ip_data.current_input_netif = NULL;
   ip_data.current_ip4_header = NULL;

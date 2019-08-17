@@ -342,12 +342,12 @@ err_t   netconn_gethostbyname(const char *name, ip_addr_t *addr);
 #define netconn_err(conn)               ((conn)->last_err)
 #define netconn_recv_bufsize(conn)      ((conn)->recv_bufsize)
 
-/** Set the blocking status of netconn calls (@todo: write/send is missing) */
+/** Set the blocking status of netconn calls () */
 #define netconn_set_nonblocking(conn, val)  do { if(val) { \
   (conn)->flags |= NETCONN_FLAG_NON_BLOCKING; \
 } else { \
   (conn)->flags &= ~ NETCONN_FLAG_NON_BLOCKING; }} while(0)
-/** Get the blocking status of netconn calls (@todo: write/send is missing) */
+/** Get the blocking status of netconn calls ( */
 #define netconn_is_nonblocking(conn)        (((conn)->flags & NETCONN_FLAG_NON_BLOCKING) != 0)
 
 #if LWIP_IPV6

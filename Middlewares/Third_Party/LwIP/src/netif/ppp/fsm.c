@@ -43,11 +43,6 @@
 #include "netif/ppp/ppp_opts.h"
 #if PPP_SUPPORT /* don't build if not configured for use in lwipopts.h */
 
-/*
- * @todo:
- * Randomize fsm id on link/init.
- * Deal with variable outgoing MTU.
- */
 
 #if 0 /* UNUSED */
 #include <stdio.h>
@@ -79,7 +74,7 @@ void fsm_init(fsm *f) {
     ppp_pcb *pcb = f->pcb;
     f->state = PPP_FSM_INITIAL;
     f->flags = 0;
-    f->id = 0;				/* XXX Start with random id? */
+    f->id = 0;				/*  */
     f->maxnakloops = pcb->settings.fsm_max_nak_loops;
     f->term_reason_len = 0;
 }

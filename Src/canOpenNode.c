@@ -147,6 +147,14 @@ canOpenNode_enumTypeDef_ApplicationError canOpenNode_packetReceived(uint16_t cob
 				RobotArm_updateEncoder(NodeId, encoderRawData);
 				// verstehe ich nicht TODO JJ Help
 			}
+			// funktioniert das so?
+			else if(NodeId >= NODE_ID_MOTOR_1 && NodeId <= NODE_ID_MOTOR_5)
+			{
+				static uint16_t motorRawData;
+				// befinden sich hier Informationen drinnen ob es velocity state oder was anderes ist?
+				motorRawData = ((uint16_t)(data[1]) << 8) | (uint16_t)(data[0]);
+				RobotArm_updateMotor(NodeId, motorRawData);
+			}
 			osSemaphoreRelease(semCanOpenSDORXHandle);
 			break;
 		case COB_ID_RX_PDO_1:
@@ -166,6 +174,7 @@ canOpenNode_enumTypeDef_ApplicationError canOpenNode_packetReceived(uint16_t cob
 		case COB_ID_TX_SDO:
 	//        break;
 		case COB_ID_RX_SDO:
+			// machen wir hiermit etwas?
 			for(uint32_t i=0;i<8;i++)
 			{
 				sdoRx.buffer[i]=data[i];

@@ -274,11 +274,10 @@ typedef struct /*CHANGE SE 08.07.2019 */
 	// -100 ... 100 Joystick
 	int16_t  targetCoordinates_r;		// joystick - y; cylinder coordinates
 	int16_t  targetCoordinates_h;		// joystick - ?
-
 	int16_t  targetCoordinates_phi;		// joystick - x; 11
-	int16_t  targetJointVelocity;		// [RPM]
 
-	uint16_t  maxJointVelocity;		// [RPM]
+	int16_t  targetJointVelocity;		// [RPM]
+	uint16_t maxJointVelocity;		// [RPM]
 	uint16_t velocityEndEffector;	//
 
 	globalData_enumTypeDef_robotArm2Buttons microLinearActorState;
@@ -296,12 +295,14 @@ typedef struct /*CHANGE SE 08.07.2019 */
 	uint16_t actualCoordinates_h;		//
 	uint16_t actualCoordinates_phi;		//
 
+	uint16_t actualJointAngle[5];
 	uint16_t actualJointAngle1;			// 0,00 ... 360,00° = 0 ... 36000
 	uint16_t actualJointAngle2;			// 0 ... 360°
 	uint16_t actualJointAngle3;			// 0 ... 360°
 	uint16_t actualJointAngle4;			// 0 ... 360°
 	uint16_t actualJointAngle5;			// 0 ... 360°
 
+//	uint16_t actualVelocity[5];
 	int32_t actualPositionEndEffector;	//
 
 }globalData_typeDef_robotArm_ARM_GS;

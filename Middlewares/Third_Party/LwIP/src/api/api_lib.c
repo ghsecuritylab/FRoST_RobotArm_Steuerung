@@ -427,7 +427,7 @@ netconn_accept(struct netconn *conn, struct netconn **new_conn)
 
   if (accept_ptr == &netconn_aborted) {
     /* a connection has been aborted: out of pcbs or out of netconns during accept */
-    /* @todo: set netconn error, but this would be fatal and thus block further accepts */
+    /*  */
 #if TCP_LISTEN_BACKLOG
     API_MSG_VAR_FREE(msg);
 #endif /* TCP_LISTEN_BACKLOG */
@@ -503,7 +503,7 @@ netconn_recv_data(struct netconn *conn, void **new_buf)
   if (ERR_IS_FATAL(conn->last_err)) {
     /* don't recv on fatal errors: this might block the application task
        waiting on recvmbox forever! */
-    /* @todo: this does not allow us to fetch data that has been put into recvmbox
+    /*
        before the fatal error occurred - is that a problem? */
     return conn->last_err;
   }
@@ -538,7 +538,7 @@ netconn_recv_data(struct netconn *conn, void **new_buf)
 #endif /* (LWIP_UDP || LWIP_RAW) */
   {
     /* Let the stack know that we have taken the data. */
-    /* @todo: Speedup: Don't block and wait for the answer here
+    /*
        (to prevent multiple thread-switches). */
     API_MSG_VAR_REF(msg).conn = conn;
     if (buf != NULL) {

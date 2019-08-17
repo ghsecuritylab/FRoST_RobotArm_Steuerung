@@ -78,8 +78,8 @@ uint8_t RobotArm_setSingleAngleD(uint8_t NodeId, double actualAngle, double tage
 canOpenNode_enumTypeDef_ApplicationError Arm_readControlWord(uint8_t NodeId);
 canOpenNode402_enumTypeDef_States Arm_readStateWord(uint8_t NodeId);
 uint32_t Arm_readVelocity(uint8_t NodeId);
-void RobotArm_updateMotor(void);
-void RobotArm_updateBSData(void);
+void RobotArm_updateMotor(uint8_t NodeId, uint16_t data);
+void RobotArm_updateStateMachine(void);
 
 
 typedef enum{

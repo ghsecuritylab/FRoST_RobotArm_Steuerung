@@ -38,7 +38,7 @@
 extern canOpen_typeDef_SDOprimitive BGE6010_BG65S_initSDOs[INIT_SDO_COUNT];
 
 /* indices of DSA parameters
- * TODO add more if needed */
+
 typedef enum
 {
     CANOPEN_IDX_VELOCITY_MEAS_RESULT = 0x3A04   // velocity measurement result

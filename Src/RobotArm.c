@@ -10,15 +10,12 @@
 #include "can.h"
 #include "globalDataStructures_CM_MTR_FRoST.h"
 
-//canOpenNode_typeDef_Node402 robotArm_MotorTest;   // use only in test mode
-//canOpenNode_typeDef_Node402 robotArm_Motor1;
+
 canOpenNode_typeDef_Node402 robotArm_Motor2;
 canOpenNode_typeDef_Node402 robotArm_Motor3;
 canOpenNode_typeDef_Node402 robotArm_Motor4;
 canOpenNode_typeDef_Node402 robotArm_Motor5;
-//canOpenNode_typeDef_Node402 robotArm_Motor6;
 
-//canOpenNode_typeDef_Node robotArm_EncoderTest;
 canOpenNode_typeDef_Node robotArm_Encoder1;
 canOpenNode_typeDef_Node robotArm_Encoder2;
 canOpenNode_typeDef_Node robotArm_Encoder3;
@@ -32,7 +29,7 @@ globalData_typeDef_robotArm RobotArm;
 
 /* test values trajectoy */
 static globalData_typeDef_robotArm_ARM_GS getAngles;
-//static uint16_t setPointAngles[2][6] = {{0,0,0,0,18000,0},{0,0,0,0,27000,0}};
+
 /* TEST VALUE'S */
 //messageRobotArmRX.yValue 					=	50;
 //messageRobotArmRX.maxJointVelocity 			=	10;
@@ -52,28 +49,27 @@ static globalData_typeDef_robotArm_ARM_GS getAngles;
  * 		copy global data structure, first check mode
  * 		and then do some operations;
  */
-globalData_typeDef_robotArm RobotArm_SetParameter(globalData_typeDef_robotArm_GS_ARM RX,globalData_typeDef_robotArm_ARM_GS TX)
+void RobotArm_SetParameter(globalData_typeDef_robotArm* Arm,globalData_typeDef_robotArm_GS_ARM RX)
 {
-	globalData_typeDef_robotArm result;
-
-
-	return result;
+	Arm->Crrt_mode_Soll = RX.mode;
+	//Arm->Achse[RX.ArmAxis-1].Motor.;
 }
 
-void RobotArm_updateBSData(void)
+void RobotArm_updateStateMachine(void)
 {
 	// copy
 	static globalData_typeDef_robotArm_GS_ARM messageRobotArmRX = {0};
 	messageRobotArmRX = globalDataStructures_getRobotArm_GS_ARM();
-	static globalData_typeDef_robotArm_ARM_GS messageRobotArmTX = {0};
-	messageRobotArmTX = globalDataStructures_getRobotArm_ARM_GS();
+	// FIXME kann eigentlich weg
+	// static globalData_typeDef_robotArm_ARM_GS messageRobotArmTX = {0};
+	// messageRobotArmTX = globalDataStructures_getRobotArm_ARM_GS();
 
 	/* FIXME TESTMODE VAR's */
 	messageRobotArmRX.mode = ROBOTARMMODE_IK;
 
 	// Set Arm Struct
-	globalData_typeDef_robotArm RobotArm;
-	RobotArm = RobotArm_SetParameter(messageRobotArmRX,messageRobotArmTX);
+	globalData_typeDef_robotArm* pRobotArm = &RobotArm;
+	RobotArm_SetParameter(pRobotArm,messageRobotArmRX);
 
 	// state machine
 	switch(RobotArm.Arm_State_Ist)
@@ -107,15 +103,11 @@ void RobotArm_updateState(void)
 	static globalData_typeDef_robotArm_GS_ARM messageRobotArmRX_old;
 	static globalData_typeDef_robotArm_GS_ARM messageRobotArmRX = {0};
 	messageRobotArmRX = globalDataStructures_getRobotArm_GS_ARM();
-	static globalData_typeDef_robotArm_ARM_GS messageRobotArmTX = {0};
-	messageRobotArmTX = globalDataStructures_getRobotArm_ARM_GS();
+	//static globalData_typeDef_robotArm_ARM_GS messageRobotArmTX = {0};
+	//messageRobotArmTX = globalDataStructures_getRobotArm_ARM_GS();
 
 	/* FIXME TESTMODE VAR's */
 	messageRobotArmRX.mode = ROBOTARMMODE_IK;
-
-	// Set Arm Struct
-
-	RobotArm = RobotArm_SetParameter(messageRobotArmRX,messageRobotArmTX);
 
 	static uint8_t AxisNodeId;
 	Node = (canOpenNode_typeDef_Node402*) canOpenNodeInstances[AxisNodeId];
@@ -213,18 +205,23 @@ void RobotArm_updateState(void)
     messageRobotArmRX_old = messageRobotArmRX;
 }
 
-void RobotArm_updateMotor(void)
+void RobotArm_updateMotor(uint8_t NodeId, uint16_t data)
 {
+	// Get
+	static globalData_typeDef_robotArm_ARM_GS messageRobotArmTX = {0};
+	messageRobotArmTX = globalDataStructures_getRobotArm_ARM_GS();
 
-	// update MotorArm
-	for(int nodeid=0x21; nodeid <= 0x25; nodeid++)
-	{
-		// read state
-		RobotArm.Achse[nodeid-33].Motor.Node402State = Arm_readStateWord(nodeid);
-		RobotArm.Achse[nodeid-33].Motor.Node402Mode = Arm_readControlWord(nodeid);
-		// read velocity
-		//Arm_readVelocity(nodeid);
-	}
+    canOpenNode_typeDef_Node402* Node;
+	Node = (canOpenNode_typeDef_Node402*) canOpenNodeInstances[NodeId];
+	// FIXME JJ 18082019 richtig Zuweisung muss hier passieren
+	Node->Node402State = CANOPEN402_STATE_OPERATION_ENABLED;
+	Node->Node402Mode = NODE402MODE_PROFILE_VELOCITY;
+	Node->ValuesVelocityMode.velocity_demand = (int32_t) 4;
+
+	// Set
+    if(globalDataStructures_setRobotArm_ARM_GS(messageRobotArmTX)!=GLOBAL_DATA_STRUCT_SET_OK) Error_Handler();
+
+
 }
 
 void RobotArm_updateEncoder(uint8_t NodeId, uint16_t data)

@@ -41,11 +41,6 @@
 #ifndef EUI64_H
 #define EUI64_H
 
-/*
- * @todo:
- *
- * Maybe this should be done by processing struct in6_addr directly...
- */
 typedef union
 {
     u8_t e8[8];
