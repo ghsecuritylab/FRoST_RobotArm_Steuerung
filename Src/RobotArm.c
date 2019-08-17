@@ -11,6 +11,26 @@
 #include "globalDataStructures_CM_MTR_FRoST.h"
 
 
+
+/*
+ * TaskRXCAN 	 TASKRXETH
+ * Semp				Semp
+ *  |		   	 	|
+ *  | 		  	 	|
+ *  V		     	V
+ * --------------------
+ * get copy of struct
+ *arm struct ? semp verwenden?
+ *---------------------
+ *	      |
+ *	      |
+ *	      V
+ *	      copy arm semp
+ *	      TX
+ *
+ */
+
+
 canOpenNode_typeDef_Node402 robotArm_Motor2;
 canOpenNode_typeDef_Node402 robotArm_Motor3;
 canOpenNode_typeDef_Node402 robotArm_Motor4;
@@ -95,7 +115,6 @@ void RobotArm_updateStateMachine(void)
 	}
 
 }
-
 
 void RobotArm_updateState(void)
 {
@@ -205,6 +224,10 @@ void RobotArm_updateState(void)
     messageRobotArmRX_old = messageRobotArmRX;
 }
 
+///////////////////////////////////////////////////////
+///					   UPDATE						///
+///////////////////////////////////////////////////////
+
 void RobotArm_updateMotor(uint8_t NodeId, uint16_t data)
 {
 	// Get
@@ -232,6 +255,7 @@ void RobotArm_updateEncoder(uint8_t NodeId, uint16_t data)
 
 	if(messageRobotArmTX.dataID==GLOBALDATA_ID_ARM)
 	{
+		// add TX Message
 		/* calculate from raw data (0 - 16384) the angle values (0 - 36000)  */
 		uint16_t jointAngle = 0;
 		float temp1 = 2.19727; // faktor - 0 ... 16384 rawData to 0 ... 36000
@@ -239,6 +263,7 @@ void RobotArm_updateEncoder(uint8_t NodeId, uint16_t data)
 		jointAngle = (uint16_t) temp1;
 
     	/* check id */
+		/* FIXME JJ 18082019 eigentlich sollte das raus da man nicht hier in ausgehende Nachricht schreibt*/
     	switch (NodeId)
     	{
     		case NODE_ID_ENCODER_1:
@@ -259,6 +284,13 @@ void RobotArm_updateEncoder(uint8_t NodeId, uint16_t data)
     		default:
     			break;
     	}
+
+    	// add Node
+        canOpenNode_typeDef_Node406* Node;
+    	Node = (canOpenNode_typeDef_Node406*) canOpenNodeInstances[NodeId];
+    	// FIXME JJ 18082019 richtig Zuweisung muss hier passieren
+    	Node->ValuesEncoder.position_actual = (int32_t)jointAngle;
+    	Node->ValuesEncoder.velocity_actual = (int32_t)4;
 	}
 	else
 	{
@@ -268,6 +300,11 @@ void RobotArm_updateEncoder(uint8_t NodeId, uint16_t data)
 	// Set
     if(globalDataStructures_setRobotArm_ARM_GS(messageRobotArmTX)!=GLOBAL_DATA_STRUCT_SET_OK) Error_Handler();
 }
+
+
+///////////////////////////////////////////////////////
+///						MOVEMENT					///
+///////////////////////////////////////////////////////
 
 void RobotArm_setSingleAngle(uint8_t NodeId, uint16_t actualAngle, uint16_t tagetAngle, uint16_t hysteresis, int32_t velocity)
 {
@@ -538,7 +575,6 @@ void RobotArm_allMotorsQuickStop(void)
 	if(canOpenNode_SdoWr(NODE_ID_MOTOR_5,0x6040,0,0x0002,2)!=APPLICATIONERROR_NONE){};//{return;}
 }
 
-
 void RobotArm_allMotorsHALT(void)
 {
 //	if(canOpenNode_SdoWr(NODE_ID_MOTOR_TEST,0x6040,0,0x010F,2)!=APPLICATIONERROR_NONE){return;}
@@ -569,12 +605,6 @@ void RobotArm_allMotors_PSM_restart(void)
 	{
 		return;
 	}
-//	robotArm_MotorTest.Node402State = CANOPEN402_STATE_READY_TO_SWITCH_ON;
-//	robotArm_Motor1.Node402State = CANOPEN402_STATE_READY_TO_SWITCH_ON;
-//	robotArm_Motor2.Node402State = CANOPEN402_STATE_READY_TO_SWITCH_ON;
-//	robotArm_Motor3.Node402State = CANOPEN402_STATE_READY_TO_SWITCH_ON;
-//	robotArm_Motor4.Node402State = CANOPEN402_STATE_READY_TO_SWITCH_ON;
-//	robotArm_Motor5.Node402State = CANOPEN402_STATE_READY_TO_SWITCH_ON;
 }
 
 void RobotArm_setLinearActuatorDutyCycle(uint8_t percent, globalData_enumTypeDef_robotArm2Buttons state)
@@ -617,8 +647,6 @@ void RobotArm_setLinearActuatorDutyCycle(uint8_t percent, globalData_enumTypeDef
 			break;
 	}
 }
-
-
 
 /* called when error occurs
  * stops motor and resets node */
@@ -668,6 +696,21 @@ void RobotArm_errorHandler(uint8_t NodeId)
     active=0;
 }
 
+
+///////////////////////////////////////////////////////
+///						INIT						///
+///////////////////////////////////////////////////////
+
+
+void RobotArm_init(void)
+{
+	canOpenNode_MasterNmtWr(0x80, 0); // pre operational
+	RobotArm_initMotors();	// isRobotArm_initMotorsSuccessful
+	RobotArm_initEncoders(); // isRobotArm_initEncodersSuccessfull
+	RobotArm_initLinearActuator();
+	canOpenNode_MasterNmtWr(0x01, 0);
+}
+
 void RobotArm_initLinearActuator(void)
 {
 	TIM_OC_InitTypeDef usConfigOC;
@@ -679,16 +722,7 @@ void RobotArm_initLinearActuator(void)
 	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
 }
 
-void RobotArm_init(void)
-{
-	canOpenNode_MasterNmtWr(0x80, 0); // pre operational
-	RobotArm_initMotors();
-	RobotArm_initEncoders();
-	RobotArm_initLinearActuator();
-	canOpenNode_MasterNmtWr(0x01, 0);
-}
-
-
+// FIXME 18082019 kann gelöscht werden
 void RobotArm_initEncoders(void)
 {
 //    /* set parameters to node structures */
@@ -769,38 +803,36 @@ void RobotArm_initEncoders(void)
 
 }
 
-/*
-
 uint8_t isRobotArm_initEncodersSuccessfull(globalData_typeDef_robotArm* Check_Arm)
 {
-	if (!isRobotArm_initeEncoders_SetUpSucessfull(Check_Arm->robotArm_Encoder1,NODE_ID_ENCODER_1)) return 0;
-	if (!isRobotArm_initeEncoders_SetUpSucessfull(Check_Arm->robotArm_Encoder2,NODE_ID_ENCODER_2)) return 0;
-	if (!isRobotArm_initeEncoders_SetUpSucessfull(Check_Arm->robotArm_Encoder3,NODE_ID_ENCODER_3)) return 0;
-	if (!isRobotArm_initeEncoders_SetUpSucessfull(Check_Arm->robotArm_Encoder4,NODE_ID_ENCODER_4)) return 0;
-	if (!isRobotArm_initeEncoders_SetUpSucessfull(Check_Arm->robotArm_Encoder5,NODE_ID_ENCODER_5)) return 0;
+	if (!isRobotArm_initeEncoders_SetUpSucessfull(&Check_Arm->Achse[0].Encoder,NODE_ID_ENCODER_1)) return 0;
+	if (!isRobotArm_initeEncoders_SetUpSucessfull(&Check_Arm->Achse[1].Encoder,NODE_ID_ENCODER_2)) return 0;
+	if (!isRobotArm_initeEncoders_SetUpSucessfull(&Check_Arm->Achse[2].Encoder,NODE_ID_ENCODER_3)) return 0;
+	if (!isRobotArm_initeEncoders_SetUpSucessfull(&Check_Arm->Achse[3].Encoder,NODE_ID_ENCODER_4)) return 0;
+	if (!isRobotArm_initeEncoders_SetUpSucessfull(&Check_Arm->Achse[4].Encoder,NODE_ID_ENCODER_5)) return 0;
 	return 1;
 }
 
-uint8_t isRobotArm_initeEncoders_SetUpSucessfull(canOpenNode_typeDef_Node* Node,uint8_t Node_id)
+uint8_t isRobotArm_initeEncoders_SetUpSucessfull(canOpenNode_typeDef_Node406* Node,uint8_t Node_id)
 {
-	Node->NodeId 			= Node_id;
-	Node->NodeType 			= NODETYPE_EAM360;
-	Node->NodeState 		= NODESTATE_NONE;
-	Node->NodeError 		= NODEERROR_NONE;
-	Node->NodeNmtStatus		= NOTESTATE_NMT_NONE;
-	Node->hcan				= &hcan1;
-	Node->mhcanHandle		= &mhcan1Handle;
-	Node->errorCallback	= &RobotArm_errorHandler;
-	if(canOpenNode_addInstance(Node, 0, 0)!=APPLICATIONERROR_NONE) return 0;
+	Node->NodeBasic.NodeId 				= Node_id;
+	Node->NodeBasic.NodeType 			= NODETYPE_EAM360;
+	Node->NodeBasic.NodeState 			= NODESTATE_NONE;
+	Node->NodeBasic.NodeError 			= NODEERROR_NONE;
+	Node->NodeBasic.NodeNmtStatus		= NOTESTATE_NMT_NONE;
+	Node->NodeBasic.hcan				= &hcan1;
+	Node->NodeBasic.mhcanHandle			= &mhcan1Handle;
+	Node->NodeBasic.errorCallback		= &RobotArm_errorHandler;
+	if(canOpenNode_addInstance(Node->NodeBasic, 0, 0)!=APPLICATIONERROR_NONE) return 0;
 	return 1;
 }
 
 uint8_t isRobotArm_initMotorsSuccessful(globalData_typeDef_robotArm* Check_Arm)
 {
-	if(!isRobotArm_initMotors_SetUpSucessfull(Check_Arm->robotArm_Motor2,NODE_ID_MOTOR_2)) return 0;
-	if(!isRobotArm_initMotors_SetUpSucessfull(Check_Arm->robotArm_Motor3,NODE_ID_MOTOR_3)) return 0;
-	if(!isRobotArm_initMotors_SetUpSucessfull(Check_Arm->robotArm_Motor4,NODE_ID_MOTOR_4)) return 0;
-	if(!isRobotArm_initMotors_SetUpSucessfull(Check_Arm->robotArm_Motor5,NODE_ID_MOTOR_5)) return 0;
+	if(!isRobotArm_initMotors_SetUpSucessfull(&Check_Arm->Achse[1].Motor,NODE_ID_MOTOR_2)) return 0;
+	if(!isRobotArm_initMotors_SetUpSucessfull(&Check_Arm->Achse[2].Motor,NODE_ID_MOTOR_3)) return 0;
+	if(!isRobotArm_initMotors_SetUpSucessfull(&Check_Arm->Achse[3].Motor,NODE_ID_MOTOR_4)) return 0;
+	if(!isRobotArm_initMotors_SetUpSucessfull(&Check_Arm->Achse[4].Motor,NODE_ID_MOTOR_5)) return 0;
 	return 1;
 }
 
@@ -820,12 +852,7 @@ uint8_t isRobotArm_initMotors_SetUpSucessfull(canOpenNode_typeDef_Node402* Node,
 	return 1;
 }
 
-*/
-
-
-/* initialize the motors
- * registers the devices in canOpenNode
- * motor is ready for usage after that */
+// FIXME 18082019 kann gelöscht werden
 void RobotArm_initMotors(void)
 {
     /* set parameters to node structures */
@@ -932,29 +959,3 @@ void RobotArm_initMotors(void)
 //        Error_Handler();
 //    }
 }
-
-/* read state word and save state to node struct */
-canOpenNode402_enumTypeDef_States Arm_readStateWord(uint8_t NodeId)
-{
-    return canOpenNode402_readStateWord(NodeId);
-}
-
-canOpenNode_enumTypeDef_ApplicationError Arm_readControlWord(uint8_t NodeId)
-{
-    return canOpenNode402_readControlWord(NodeId);
-}
-
-uint32_t Arm_readVelocity(uint8_t NodeId)
-{
-	uint32_t result;
-	uint32_t* presult = &result;
-    size_t length;
-
-    if(canOpenNode_SdoRd(NodeId,0x3A04,0x01,presult,&length)!=APPLICATIONERROR_NONE)
-        *presult = 0x7FFFFFFF;
-
-    result=*presult;
-    return result;
-}
-
-

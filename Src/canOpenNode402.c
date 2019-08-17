@@ -438,3 +438,27 @@ canOpenNode_enumTypeDef_ApplicationError canOpenNode402_PowerStateMachine(uint8_
     }
     return APPLICATIONERROR_NONE;
 }
+
+
+canOpenNode402_enumTypeDef_States Arm_readStateWord(uint8_t NodeId)
+{
+    return canOpenNode402_readStateWord(NodeId);
+}
+
+canOpenNode_enumTypeDef_ApplicationError Arm_readControlWord(uint8_t NodeId)
+{
+    return canOpenNode402_readControlWord(NodeId);
+}
+
+uint32_t Arm_readVelocity(uint8_t NodeId)
+{
+	uint32_t result;
+	uint32_t* presult = &result;
+    size_t length;
+
+    if(canOpenNode_SdoRd(NodeId,0x3A04,0x01,presult,&length)!=APPLICATIONERROR_NONE)
+        *presult = 0x7FFFFFFF;
+
+    result=*presult;
+    return result;
+}

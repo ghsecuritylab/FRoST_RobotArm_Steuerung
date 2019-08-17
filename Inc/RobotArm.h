@@ -53,33 +53,7 @@
  * reads global structure
  * calls ErrorHandler if failed to get global structure
  */
-void RobotArm_updateState(void);
-void RobotArm_setPSM(uint8_t NodeID);
-void RobotArm_initMotors(void);
-void RobotArm_joystick2rpm(int16_t y_direction, uint16_t maxVelocity, uint8_t NodeId);
-void RobotArm_setProfileVelocity(int32_t velocity_rpm, uint8_t NodeId);
-void RobotArm_initLinearActuator(void);
-void RobotArm_init(void);
-void RobotArm_setLinearActuatorDutyCycle(uint8_t percent, globalData_enumTypeDef_robotArm2Buttons state);
-void RobotArm_allMotorsHALT(void);
-void RobotArm_setVelocityButtons(uint16_t velocity , globalData_enumTypeDef_robotArm2Buttons state, uint8_t NodeId);
-void RobotArm_initEncoders(void);
-void RobotArm_updateEncoder(uint8_t NodeId, uint16_t data);
-void RobotArm_allMotors_PSM_restart(void);
-void RobotArm_allMotorsQuickStop(void);
-void RobotArm_setAngle(uint8_t NodeId, uint16_t actualAngle, uint16_t tagetAngle, uint16_t hysteresis, int32_t velocity);
-void RobotArm_setSingleAngle(uint8_t NodeId, uint16_t actualAngle, uint16_t tagetAngle, uint16_t hysteresis, int32_t velocity);
-uint8_t RobotArm_setSingleAngleD(uint8_t NodeId, double actualAngle, double tagetAngle, double hysteresis, double velocity);
 
-//uint8_t isRobotArm_initEncodersSuccessfull(globalData_typeDef_robotArm* Check_Arm);
-//uint8_t isRobotArm_initeEncoders_SetUpSucessfull(canOpenNode_typeDef_Node* Node,uint8_t Node_id);
-//uint8_t isRobotArm_initMotorsSuccessful(globalData_typeDef_robotArm* Check_Arm);
-//uint8_t isRobotArm_initMotors_SetUpSucessfull(canOpenNode_typeDef_Node402* Node,uint8_t Node_id);
-canOpenNode_enumTypeDef_ApplicationError Arm_readControlWord(uint8_t NodeId);
-canOpenNode402_enumTypeDef_States Arm_readStateWord(uint8_t NodeId);
-uint32_t Arm_readVelocity(uint8_t NodeId);
-void RobotArm_updateMotor(uint8_t NodeId, uint16_t data);
-void RobotArm_updateStateMachine(void);
 
 
 typedef enum{
@@ -166,5 +140,37 @@ typedef struct
 ///* returns state of stop bit
 // * but does not read physical from node */
 //uint8_t RobotArm_getStopActive(uint8_t NodeId);
+
+void RobotArm_updateState(void);
+void RobotArm_setPSM(uint8_t NodeID);
+void RobotArm_initMotors(void);
+void RobotArm_joystick2rpm(int16_t y_direction, uint16_t maxVelocity, uint8_t NodeId);
+void RobotArm_setProfileVelocity(int32_t velocity_rpm, uint8_t NodeId);
+void RobotArm_initLinearActuator(void);
+void RobotArm_init(void);
+void RobotArm_setLinearActuatorDutyCycle(uint8_t percent, globalData_enumTypeDef_robotArm2Buttons state);
+void RobotArm_allMotorsHALT(void);
+void RobotArm_setVelocityButtons(uint16_t velocity , globalData_enumTypeDef_robotArm2Buttons state, uint8_t NodeId);
+void RobotArm_initEncoders(void);
+void RobotArm_updateEncoder(uint8_t NodeId, uint16_t data);
+void RobotArm_allMotors_PSM_restart(void);
+void RobotArm_allMotorsQuickStop(void);
+void RobotArm_setAngle(uint8_t NodeId, uint16_t actualAngle, uint16_t tagetAngle, uint16_t hysteresis, int32_t velocity);
+void RobotArm_setSingleAngle(uint8_t NodeId, uint16_t actualAngle, uint16_t tagetAngle, uint16_t hysteresis, int32_t velocity);
+uint8_t RobotArm_setSingleAngleD(uint8_t NodeId, double actualAngle, double tagetAngle, double hysteresis, double velocity);
+uint8_t isRobotArm_initEncodersSuccessfull(globalData_typeDef_robotArm* Check_Arm);
+uint8_t isRobotArm_initeEncoders_SetUpSucessfull(canOpenNode_typeDef_Node* Node,uint8_t Node_id);
+
+//uint8_t isRobotArm_initEncodersSuccessfull(globalData_typeDef_robotArm* Check_Arm);
+//uint8_t isRobotArm_initeEncoders_SetUpSucessfull(canOpenNode_typeDef_Node* Node,uint8_t Node_id);
+//uint8_t isRobotArm_initMotorsSuccessful(globalData_typeDef_robotArm* Check_Arm);
+//uint8_t isRobotArm_initMotors_SetUpSucessfull(canOpenNode_typeDef_Node402* Node,uint8_t Node_id);
+canOpenNode_enumTypeDef_ApplicationError Arm_readControlWord(uint8_t NodeId);
+canOpenNode402_enumTypeDef_States Arm_readStateWord(uint8_t NodeId);
+uint32_t Arm_readVelocity(uint8_t NodeId);
+void RobotArm_updateMotor(uint8_t NodeId, uint16_t data);
+void RobotArm_updateStateMachine(void);
+uint8_t isRobotArm_initMotorsSuccessful(globalData_typeDef_robotArm* Check_Arm);
+uint8_t isRobotArm_initMotors_SetUpSucessfull(canOpenNode_typeDef_Node402* Node,uint8_t Node_id);
 
 #endif /* ROBOTARM_H_ */

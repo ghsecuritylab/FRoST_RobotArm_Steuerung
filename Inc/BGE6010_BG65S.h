@@ -37,14 +37,14 @@
 #define INIT_SDO_COUNT (35) // number of init SDOs
 extern canOpen_typeDef_SDOprimitive BGE6010_BG65S_initSDOs[INIT_SDO_COUNT];
 
-/* indices of DSA parameters
+/* indices of DSA parameters*/
 
 typedef enum
 {
     CANOPEN_IDX_VELOCITY_MEAS_RESULT = 0x3A04   // velocity measurement result
 }canOpenBGE6010_enumTypeDef_IDX_DSA;
 
-/* digital outputs */
+
 typedef enum
 {
      BGE6010_DOUT0

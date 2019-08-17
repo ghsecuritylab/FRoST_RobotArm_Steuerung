@@ -966,10 +966,10 @@ void Callback01(void const * argument)
 			// if motor/encoder init FIXME
 			if(true)
 			{
-				// TODO JJ 18082019 reine TX Nachrichten sollten hier verwendet werden
+				// TODO JJ 18082019 reine/oder auch nicht .... TX Nachrichten sollten hier verwendet werden
 				//RobotArm_updateMotor();
 //				// read state
-//				Arm_readStateWord(0x21);
+				Arm_readStateWord(0x21);
 //				Arm_readStateWord(0x22);
 //				Arm_readStateWord(0x23);
 //				Arm_readStateWord(0x24);

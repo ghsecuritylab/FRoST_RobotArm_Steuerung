@@ -455,20 +455,20 @@ canOpenNode402_enumTypeDef_States PowerTrain_getNode402State(uint8_t NodeId)
 /* read velocities from register by sending SDO */
 void PowerTrain_readVelocity(int32_t* velocity_left, int32_t* velocity_right)
 {
-    size_t length;
-#if TEST_MODE
-    if(canOpenNode_SdoRd(NODE_ID_MOTOR_TEST,CANOPEN_IDX_VELOCITY_MEAS_RESULT,CANOPEN_SUBIDX_VELOCITY_MEAS_RESULT,velocity_left,&length)!=APPLICATIONERROR_NONE)
-        *velocity_left = 0x7FFFFFFF;
-    *velocity_right=0;
-    powerTrain_MotorTest.ValuesVelocityMode.velocity_actual=*velocity_left;
-#else
-    if(canOpenNode_SdoRd(NODE_ID_MOTOR_LEFT,CANOPEN_IDX_VELOCITY_MEAS_RESULT,CANOPEN_SUBIDX_VELOCITY_MEAS_RESULT,velocity_left,&length)!=APPLICATIONERROR_NONE)
-        *velocity_left = 0x7FFFFFFF;
-    if(canOpenNode_SdoRd(NODE_ID_MOTOR_RIGHT,CANOPEN_IDX_VELOCITY_MEAS_RESULT,CANOPEN_SUBIDX_VELOCITY_MEAS_RESULT,velocity_right,&length)!=APPLICATIONERROR_NONE)
-        *velocity_right = 0x7FFFFFFF;
-    powerTrain_MotorLeft.ValuesVelocityMode.velocity_actual=*velocity_left;
-    powerTrain_MotorRight.ValuesVelocityMode.velocity_actual=*velocity_right;
-#endif
+//    size_t length;
+//#if TEST_MODE
+//    if(canOpenNode_SdoRd(NODE_ID_MOTOR_TEST,CANOPEN_IDX_VELOCITY_MEAS_RESULT,CANOPEN_SUBIDX_VELOCITY_MEAS_RESULT,velocity_left,&length)!=APPLICATIONERROR_NONE)
+//        *velocity_left = 0x7FFFFFFF;
+//    *velocity_right=0;
+//    powerTrain_MotorTest.ValuesVelocityMode.velocity_actual=*velocity_left;
+//#else
+//    //if(canOpenNode_SdoRd(NODE_ID_MOTOR_LEFT,CANOPEN_IDX_VELOCITY_MEAS_RESULT,CANOPEN_SUBIDX_VELOCITY_MEAS_RESULT,velocity_left,&length)!=APPLICATIONERROR_NONE)
+//    //   *velocity_left = 0x7FFFFFFF;
+//        //if(canOpenNode_SdoRd(NODE_ID_MOTOR_RIGHT,CANOPEN_IDX_VELOCITY_MEAS_RESULT,CANOPEN_SUBIDX_VELOCITY_MEAS_RESULT,velocity_right,&length)!=APPLICATIONERROR_NONE)
+//    //    *velocity_right = 0x7FFFFFFF;
+//    powerTrain_MotorLeft.ValuesVelocityMode.velocity_actual=*velocity_left;
+//    powerTrain_MotorRight.ValuesVelocityMode.velocity_actual=*velocity_right;
+//#endif
 }
 
 /* read state word and save state to node struct */
