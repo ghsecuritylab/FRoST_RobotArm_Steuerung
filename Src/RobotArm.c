@@ -11,26 +11,6 @@
 #include "globalDataStructures_CM_MTR_FRoST.h"
 
 
-
-/*
- * TaskRXCAN 	 TASKRXETH
- * Semp				Semp
- *  |		   	 	|
- *  | 		  	 	|
- *  V		     	V
- * --------------------
- * get copy of struct
- *arm struct ? semp verwenden?
- *---------------------
- *	      |
- *	      |
- *	      V
- *	      copy arm semp
- *	      TX
- *
- */
-
-
 canOpenNode_typeDef_Node402 robotArm_Motor2;
 canOpenNode_typeDef_Node402 robotArm_Motor3;
 canOpenNode_typeDef_Node402 robotArm_Motor4;
@@ -823,7 +803,7 @@ uint8_t isRobotArm_initeEncoders_SetUpSucessfull(canOpenNode_typeDef_Node406* No
 	Node->NodeBasic.hcan				= &hcan1;
 	Node->NodeBasic.mhcanHandle			= &mhcan1Handle;
 	Node->NodeBasic.errorCallback		= &RobotArm_errorHandler;
-	if(canOpenNode_addInstance(Node->NodeBasic, 0, 0)!=APPLICATIONERROR_NONE) return 0;
+	if(canOpenNode_addInstance(&Node->NodeBasic, 0, 0)!=APPLICATIONERROR_NONE) return 0;
 	return 1;
 }
 

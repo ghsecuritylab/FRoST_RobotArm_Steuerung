@@ -159,7 +159,7 @@ void RobotArm_setAngle(uint8_t NodeId, uint16_t actualAngle, uint16_t tagetAngle
 void RobotArm_setSingleAngle(uint8_t NodeId, uint16_t actualAngle, uint16_t tagetAngle, uint16_t hysteresis, int32_t velocity);
 uint8_t RobotArm_setSingleAngleD(uint8_t NodeId, double actualAngle, double tagetAngle, double hysteresis, double velocity);
 uint8_t isRobotArm_initEncodersSuccessfull(globalData_typeDef_robotArm* Check_Arm);
-uint8_t isRobotArm_initeEncoders_SetUpSucessfull(canOpenNode_typeDef_Node* Node,uint8_t Node_id);
+uint8_t isRobotArm_initeEncoders_SetUpSucessfull(canOpenNode_typeDef_Node406* Node,uint8_t Node_id);
 
 //uint8_t isRobotArm_initEncodersSuccessfull(globalData_typeDef_robotArm* Check_Arm);
 //uint8_t isRobotArm_initeEncoders_SetUpSucessfull(canOpenNode_typeDef_Node* Node,uint8_t Node_id);
